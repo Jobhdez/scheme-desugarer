@@ -1,31 +1,35 @@
 (in-package #:manifold-impl/parser)
 
-(defun parse-exp (x)
-  (cond ((symbolp x) (make-var :v x))
-	 ((numberp x) (make-int :i x))
-	 ((scm-boolp x) (make-bool :bool x))
-	 ((scm-letp x) (make-sLet :l (parse-exp (let-var x))
-					       :e (parse-exp (let-right x))
-					       :b (parse-exp (let-body x))))
-	 ((scm-ifp x) (make-ifscm :cond (parse-exp (if-cond x))
-					    :then (parse-exp (if-then x))
-					    :else (parse-exp (if-else x))))
-	 ((scm-lambdap x) (make-lambdascm :var (parse-exp (lambda-var x))
-						   :exp (parse-exp (lambda-exp x))
-						   :body (parse-exp (lambda-bodyx))))
-	 ((scm-primitive-p x) (make-primitive :op (parse-exp (prim-op x)) :operands (mapcar #'(lambda (e) (parse-exp e)) (prim-operands x))))
-	 (t
-	  error "Not valid expression")))
+(defun parse-exp (exp)
+  (match exp
+	 ((guard x (symbolp x)) (make-var :v x))
+         ((guard x (numberp x)) (make-int :i x))
+         ((guard x (scm-boolp x)) (make-bool :bool x))
+         ((guard x (scm-letp x)) (make-sLet :var (parse-exp (let-var x))
+				            :expr (parse-exp (let-exp x))
+				            :body (parse-exp (let-body x))))
+  
+         ((guard x (scm-ifp x)) (make-ifscm :cond (parse-exp (if-cond x))
+				            :then (parse-exp (if-then x))
+				            :else (parse-exp (if-else x))))
+  
+         ((guard x (scm-lambdap x)) (make-lambdascm :var (parse-exp (lambda-var x))
+					            :expr (parse-exp (lambda-exp x))
+					            :body (parse-exp (lambda-bodyx))))
+  
+         ((guard x (scm-primitive-p x)) (make-primitive :op (parse-exp (prim-op x))
+						        :operands (mapcar #'(lambda (e) (parse-exp e)) (prim-operands x))))
+         (t error "Not valid expression")))
 
 (defstruct var v)
 
 (defstruct int i)
 
-(defstruct slet l e b)
+(defstruct slet var expr body)
 
 (defstruct ifscm cond then else)
 
-(defstruct lambdascm var exp body)
+(defstruct lambdascm var expr body)
 
 (defstruct primitive
   op
@@ -40,9 +44,27 @@
   (and (listp exp)
        (equalp (car exp) 'let)))
 
+(defun let-var (exp)
+  (car (car (car (cdr exp)))))
+
+(defun let-exp (exp)
+  (car (cdr (car (car (cdr exp))))))
+
+(defun let-body (exp)
+  (car (cdr (cdr exp))))
+
 (defun scm-ifp (exp)
   (and (listp exp)
        (equalp (car exp) 'if)))
+
+(defun if-cond (exp)
+  (car (cdr exp)))
+
+(defun if-then (exp)
+  (car (cdr (cdr exp))))
+
+(defun if-else (exp)
+  (car (cdr (cdr (cdr exp)))))
 
 (defun scm-lambdap (exp)
   (and (listp exp)
@@ -57,5 +79,3 @@
 
 (defun prim-operands (exp)
   (cdr exp))
-
-(in-package :manifold-impl/parser)
