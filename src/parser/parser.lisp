@@ -2,14 +2,15 @@
 
 (defun parse-exp (exp)
   (match exp
-	 ((guard x (symbolp x))
+	 ((guard x (and (not (scm-boolp x))
+			(symbolp x)))
 	  (make-var :v x))
 	 
          ((guard x (numberp x))
 	  (make-int :i x))
 	 
          ((guard x (scm-boolp x))
-	  (make-bool :bool x))
+	  (make-bool :value x))
 	 
          ((guard x (scm-letp x))
 	  (make-letscm :var (parse-exp (let-var x))
@@ -35,6 +36,8 @@
 (defstruct var v)
 
 (defstruct int i)
+
+(defstruct bool value)
 
 (defstruct letscm var expr body)
 
