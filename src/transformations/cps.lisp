@@ -1,9 +1,8 @@
-(in-package #:manifold-transformations)
+(in-package #:manifold-impl/parser)
 
 (defun cps-convert (ast)
-  (match
+  (match ast
    ((int :i a)
-    (make-application :arg (list const-ast a)))
+     (list  a))
    ((var :v a)
-    (make-application :arg (list const-ast a)))
-   ))
+    (list a))))

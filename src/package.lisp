@@ -10,6 +10,5 @@
 	   #:lambdascm))
 
 (defpackage #:manifold-transformations
-  (:use-package #:common-lisp
-		#:trivia
-		#:manifold-impl/parser))
+  (:use #:common-lisp
+        #:manifold-impl/parser))

@@ -8,4 +8,7 @@
 		((:file "package")
 		 (:module "parser"
 			  :serial t
-			  :components ((:file "parser")))))
+			  :components ((:file "parser")))
+		 (:module "transformations"
+			  :serial t
+			  :components ((:file "cps")))))
