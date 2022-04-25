@@ -8,3 +8,8 @@
 	   #:slet
 	   #:ifscm
 	   #:lambdascm))
+
+(defpackage #:manifold-transformations
+  (:use-package #:common-lisp
+		#:trivia
+		#:manifold-impl/parser))
