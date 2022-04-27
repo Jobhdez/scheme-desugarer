@@ -1,4 +1,4 @@
-(in-package #:manifold-impl/parser)
+(in-package #:manifold-scheme)
 
 (defun parse-exp (exp)
   (match exp
