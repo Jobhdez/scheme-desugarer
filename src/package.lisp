@@ -1,4 +1,4 @@
-(defpackage #:manifold-impl/parser
+(defpackage #:manifold-scheme
   (:use #:common-lisp
 	#:trivia)
   (:export #:parse-exp
@@ -8,7 +8,3 @@
 	   #:slet
 	   #:ifscm
 	   #:lambdascm))
-
-(defpackage #:manifold-transformations
-  (:use #:common-lisp
-        #:manifold-impl/parser))
