@@ -1,4 +1,4 @@
-(in-package #:manifold-impl/parser)
+(in-package #:manifold-scheme)
 
 (defun cps-convert (ast)
   (match ast
