@@ -21,6 +21,10 @@
 	  (make-ifscm :cond (parse-exp (if-cond x))
 		      :then (parse-exp (if-then x))
 		      :else (parse-exp (if-else x))))
+
+	 ((guard x (scm-setp x))
+	  (make-setscm :var (set-var x)
+		       :rhs (parse-exp (set-rhs x))))
   
          ((guard x (scm-lambdap x))
 	  (make-lambdascm :var (lambda-var x)
@@ -44,6 +48,8 @@
 
 (defstruct lambdascm var body)
 
+(defstruct setscm var rhs)
+
 (defstruct primitive
   op
   operands)
@@ -64,6 +70,16 @@
   (car (cdr (car (car (cdr exp))))))
 
 (defun let-body (exp)
+  (car (cdr (cdr exp))))
+
+(defun scm-setp (exp)
+  (and (listp exp)
+       (equalp (car exp) 'set!)))
+
+(defun set-var (exp)
+  (car (cdr exp)))
+
+(defun set-rhs (exp)
   (car (cdr (cdr exp))))
 
 (defun scm-ifp (exp)
