@@ -23,9 +23,8 @@
 		      :else (parse-exp (if-else x))))
   
          ((guard x (scm-lambdap x))
-	  (make-lambdascm :var (parse-exp (lambda-var x))
-			  :expr (parse-exp (lambda-exp x))
-			  :body (parse-exp (lambda-bodyx))))
+	  (make-lambdascm :var (lambda-var x)
+			  :body (parse-exp (lambda-body x))))
   
          ((guard x (scm-primitive-p x))
 	  (make-primitive :op (parse-exp (prim-op x))
@@ -43,7 +42,7 @@
 
 (defstruct ifscm cond then else)
 
-(defstruct lambdascm var expr body)
+(defstruct lambdascm var body)
 
 (defstruct primitive
   op
@@ -83,6 +82,12 @@
 (defun scm-lambdap (exp)
   (and (listp exp)
        (equalp (car exp) 'lambda)))
+
+(defun lambda-var (exp)
+  (car (cdr exp)))
+
+(defun lambda-body (exp)
+  (car (cdr (cdr exp))))
 
 (defun scm-primitive-p (exp)
   (listp exp))
