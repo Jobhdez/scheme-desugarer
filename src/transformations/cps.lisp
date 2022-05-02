@@ -9,7 +9,7 @@
 (defun t-k (ast k)
   (match ast
 	 ((guard x (atomicp x))
-	  (make-application :operator k :operands (m x)))
+	  (funcall k (m x)))
 	 
 	 ((ifscm :cond a :then b :else c)
 	  (let* ((cont-parameter (gensym "$RV"))
@@ -20,36 +20,41 @@
 		   (lambda (aexp)
 		     (make-ifscm :cond aexp
 				 :then (t-c b cont)
-				 :else (t-c c cont))))))))
+				 :else (t-c c cont))))))
+	 (_
+	  (let* ((param (gensym "$RV"))
+		 (cont (make-lambdascm :var param
+				       :body (funcall k param))))
+	    (t-c ast cont)))))
+		
 
-(defun t-c (exp c)
+(defun t-c (exp co)
   (match exp
 	 ((guard x (atomicp x))
-	  (make-application :operator c
-			    :operands (M x)))
+	  (make-application :operator co :operands (M x)))
 	 ((ifscm :cond a :then b :else c)
 	  (let ((param (gensym "$K")))
-	    (eval ``(,,(make-lambdascm :var param
+	    `(,(make-lambdascm :var param
 			               :body (t-k a
-					            (lambda (aexp)
+					            #'(lambda (aexp)
 					               (make-ifscm :cond aexp
 							           :then (t-c b param)
 							           :else (t-c c param)))))
-		     ,,c))))
+		     ,co)))
 	 ((primitive :op a :operands b)
 	  (t*-k b
-		(lambda ($es)
-		  `((cps ,a) ,$es ,c))))))
+		#'(lambda ($es)
+		  `((cps ,a) ,$es ,co))))))
 
 (defun t*-k (exprs k)
   (cond ((null exprs)
-	 (k '()))
-	((listp exprs)
-	 (t-k (car exprs)
+	 (funcall k '()))
+        ((listp exprs)
+	   (t-k (car exprs)
 	      (lambda (hd)
 		(t*-k (cdr exprs)
-		      (lambda (tl)
-			(k (cons hd tl)))))))))
+		       (lambda (tl)
+			(funcall k (cons hd tl)))))))))
   
 (defun m (aexp)
   (match aexp
