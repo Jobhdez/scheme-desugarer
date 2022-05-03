@@ -8,5 +8,6 @@
 		((:file "package")
 		 (:module "parser"
 			  :components ((:file "parser")))
+		 (:file "desugar")
 		 (:module "transformations"
 			  :components ((:file "cps")))))
