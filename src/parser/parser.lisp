@@ -34,6 +34,12 @@
          ((guard x (scm-primitive-p x))
 	  (make-primitive :op (parse-exp (prim-op x))
 			  :operands (mapcar #'(lambda (e) (parse-exp e)) (prim-operands x))))
+
+	 ((guard x (scm-applicationp x))
+	  (make-application :operator (parse-exp (app-operator x))
+			    :operands (mapcar #'(lambda (e)
+					       (parse-exp e))
+					   (app-operands x))))
 	 
          (t error "Not valid expression")))
 
@@ -68,6 +74,11 @@
 (defstruct primitive
   "A Primitive Node."
   op
+  operands)
+
+(defstruct application
+  "An Application Node."
+  operator
   operands)
 
 ;;; An Exp is one of:
@@ -194,7 +205,8 @@
   ;; Exp -> bool
   ;; given: (scm-primitive-p '(* 2 2))
   ;; T
-  (listp exp))
+  (and (listp exp)
+       (member (car exp) '(+ = - / *))))
   
 
 (defun prim-op (exp)
@@ -209,4 +221,16 @@
   ;; Exp -> Exp
   ;; given: (prim-operands '(* 2 2))
   ;; (2 2)
+  (cdr exp))
+
+(defun scm-applicationp (exp)
+  "Check if Exp is an application."
+  (listp exp))
+
+(defun app-operator (exp)
+  "Get the operator of Exp."
+  (car exp))
+
+(defun app-operands (exp)
+  "Get the operands of Exp."
   (cdr exp))
