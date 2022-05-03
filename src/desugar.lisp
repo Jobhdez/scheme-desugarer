@@ -40,7 +40,7 @@
 			    :operands (mapcar #'(lambda (e) (desugar e))
 					      (application-operands x))))
 
-	 (error "Invalid Expression")))
+	 (_ (error "Invalid Expression"))))
 
 (defun desugar-letscm (ast)
   "Converts a Let expression into a Lambda expression."
