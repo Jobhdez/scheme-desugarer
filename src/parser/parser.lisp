@@ -14,8 +14,9 @@
 	  (make-bool :value x))
 	 
          ((guard x (scm-letp x))
-	  (make-letscm :var (parse-exp (let-var x))
-		       :expr (parse-exp (let-exp x))
+	  (make-letscm :var (mapcar (lambda (v) (parse-exp v))
+				    (let-var x))
+		       :expr (mapcar (lambda (e) (parse-exp e)) (let-exp x))
 		       :body (parse-exp (let-body x))))
   
          ((guard x (scm-ifp x))
@@ -111,14 +112,15 @@
   ;; Exp -> Exp
   ;; given: (let-var '(let ((n 2)) (* n n)))
   ;; expect: n
-  (car (car (car (cdr exp)))))
+  (mapcar (lambda (binding) (car binding))
+	  (car (cdr exp))))
 
 (defun let-exp (exp)
   "Get the exp of the Let Exp."
   ;; Exp -> Exp
   ;; given: (let-exp '(let ((n 2)) (* n n)))
   ;; expect: 2
-  (car (cdr (car (car (cdr exp))))))
+  (mapcar (lambda (binding) (car (cdr binding))) (car (cdr exp))))
 
 (defun let-body (exp)
   "Get the body of the Let Exp."
