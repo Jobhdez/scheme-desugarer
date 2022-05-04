@@ -13,17 +13,14 @@
 	    (cps   a
 		   (lambda (aexp)
 		     (make-ifscm :cond aexp
-				 :then (cps-convert b cont)			                                 :else (cps-convert c cont))))))
+				 :then (cps-convert b cont)
+				 :else (cps-convert c cont))))))
 
 	 ((setscm :var a :rhs b)
 	  (cps b (lambda (aexp)
 		   (make-set-then :var a
 				  :rhs aexp
 				  :fn (funcall k '(void))))))
-				
-
-	 
-
 	 
 	 (_
 	  (let* ((param (gensym "$RV"))
