@@ -13,8 +13,18 @@
 	    (cps   a
 		   (lambda (aexp)
 		     (make-ifscm :cond aexp
-				 :then (cps-convert b cont)
-				 :else (cps-convert c cont))))))
+				 :then (cps-convert b cont)			                                 :else (cps-convert c cont))))))
+
+	 ((setscm :var a :rhs b)
+	  (cps b (lambda (aexp)
+		   (make-set-then :var a
+				  :rhs aexp
+				  :fn (funcall k '(void))))))
+				
+
+	 
+
+	 
 	 (_
 	  (let* ((param (gensym "$RV"))
 		 (cont (make-lambdascm :var param
@@ -34,7 +44,14 @@
 					               (make-ifscm :cond aexp
 							           :then (cps-convert b param)
 							           :else (cps-convert c param)))))
-		     ,co)))
+	      ,co)))
+
+	 ((setscm :var a :rhs b)
+	  (cps b (lambda (aexp)
+		   (make-set-then :var a
+				  :rhs aexp
+				  :fn (make-application :operator co
+							:operands '(void))))))
 	 ((primitive :op a :operands b)
 	  (*cps* b
 		#'(lambda ($es)
@@ -76,3 +93,9 @@
       (bool-p ast)
       (lambdascm-p ast)))
 	  
+
+;; Nodes
+
+(defstruct set-then
+  "Set-then! Node."
+  var rhs fn)
