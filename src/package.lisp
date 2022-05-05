@@ -4,7 +4,12 @@
   (:export #:parse-exp
 	   #:var
 	   #:int
+	   #:bool
 	   #:primitive
-	   #:slet
+	   #:letscm
 	   #:ifscm
-	   #:lambdascm))
+	   #:lambdascm
+	   #:letrecscm
+	   #:setscm
+	   #:beginscm
+	   #:desugar))

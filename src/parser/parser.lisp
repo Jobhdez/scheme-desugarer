@@ -18,7 +18,19 @@
 				    (let-var x))
 		       :expr (mapcar (lambda (e) (parse-exp e)) (let-exp x))
 		       :body (parse-exp (let-body x))))
-  
+
+	 ((guard x (scm-letrecp x))
+	  (make-letrecscm :bindings (mapcar (lambda (binding)
+					      (list (parse-exp (car binding))
+						    (parse-exp (car (cdr binding)))))
+					    (letrec-bindings x))
+			  :expression (parse-exp (letrec-expression x))))
+
+	 ((guard x (scm-beginscm x))
+	  (make-beginscm :body (mapcar (lambda (exp) (parse-exp exp))
+				       (begin-body (cdr x)))
+			 :expression (parse-exp (begin-exp x))))
+	 
          ((guard x (scm-ifp x))
 	  (make-ifscm :cond (parse-exp (if-cond x))
 		      :then (parse-exp (if-then x))
@@ -60,6 +72,11 @@
   "A Let Node."
   var expr body)
 
+(defstruct letrecscm
+  "A Letrec Node."
+  bindings
+  expression)
+
 (defstruct ifscm
   "An If Node."
   cond then else)
@@ -71,6 +88,12 @@
 (defstruct setscm
   "A Set! Node."
   var rhs)
+
+(defstruct beginscm
+  "A Begin Node."
+  body
+  expression)
+  
 
 (defstruct primitive
   "A Primitive Node."
@@ -128,6 +151,32 @@
   ;; given: (let-body '(let ((n 2)) (* n n)))
   ;; expect: (* n n)
   (car (cdr (cdr exp))))
+
+(defun scm-letrecp (exp)
+  (and (listp exp)
+       (equalp (car exp) 'letrec)))
+
+(defun letrec-bindings (exp)
+  (car (cdr exp)))
+
+(defun letrec-expression (exp)
+  (car (cdr (cdr exp))))
+
+(defun scm-beginscm (exp)
+  "Check if Exp is a Begin exp."
+  (and (listp exp)
+       (equalp (car exp) 'begin)))
+
+(defun begin-body (exp)
+  "Gets the body of the begin."
+  ;; Exp -> (exp)
+  ;; given: (begin-body '(begin (set! d 4) (set! f 5) (+ d f)))
+  ;; expect: '((set! d 4) (set! f 5))
+  (reverse (cdr (reverse exp))))
+
+(defun begin-exp (exp)
+  "Gets the expression - i.e., the last in Exp."
+  (car (last exp)))
 
 (defun scm-setp (exp)
   "Check if Exp is a Set! expression."
