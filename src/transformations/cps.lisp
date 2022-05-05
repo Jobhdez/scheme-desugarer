@@ -51,8 +51,10 @@
 							:operands '(void))))))
 	 ((primitive :op a :operands b)
 	  (*cps* b
-		#'(lambda ($es)
-		    `((cps ,a) ,$es ,co))))
+		 (lambda ($es)
+		   (make-primitive :op (make-cps :op a)
+				   :operands (append $es (list co))))))
+		  
 	 
 	 ((application :operator a :operands b)
 	  (cps  a
@@ -96,3 +98,6 @@
 (defstruct set-then
   "Set-then! Node."
   var rhs fn)
+
+(defstruct cps
+  op)
