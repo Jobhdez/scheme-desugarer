@@ -62,16 +62,27 @@
   "Converts a Letrec expression into a combination of Let and Begin Nodes."
   (match ast
 	 ((letrecscm :bindings a :expression b)
-	  (let* ((namings (mapcar (lambda (b) (list (car b) (parse-exp 'false)))
-				  a))
-		 (sets (mapcar (lambda (binding)
-				 (make-setscm :var (car binding)
-					      :rhs (car (cdr binding))))
-			       a))
-		 (vars (mapcar (lambda (binding) (car binding))
-			       namings))
-		 (arguments (mapcar (lambda (binding) (car (cdr binding)))
-			       namings)))
+	  (let* ((namings (mapcar
+			   (lambda (b)
+			     (list (car b) (parse-exp 'false)))
+			   a))
+		 
+		 (sets (mapcar
+			(lambda (binding)
+			  (make-setscm :var (car binding)
+				       :rhs (car (cdr binding))))
+			a))
+		 
+		 (vars (mapcar
+			(lambda (binding)
+			  (car binding))
+			namings))
+		 
+		 (arguments (mapcar
+			     (lambda (binding)
+			       (car (cdr binding)))
+			     namings)))
+	    
 	    (make-letscm :var vars
 			 :expr arguments
 			 :body (make-beginscm :body sets
