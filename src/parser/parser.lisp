@@ -153,13 +153,22 @@
   (car (cdr (cdr exp))))
 
 (defun scm-letrecp (exp)
+  "Check if Exp is a Letrec expression."
+  ;; given: (scm-letrecp '(letrec ((n (lambda (n) (* n n)))) (n 3)))
+  ;; expect: T
   (and (listp exp)
        (equalp (car exp) 'letrec)))
 
 (defun letrec-bindings (exp)
+  "Get the bindings of the Letrec expression."
+  ;; given: (letrec-bindings '(letrec ((n (lambda (n) (* n n)))) (n 3)))
+  ;; expect: ((n (lambda (n) (* n n))))
   (car (cdr exp)))
 
 (defun letrec-expression (exp)
+  "Get the Letrec expression."
+  ;; given: '(letrec ((n (lambda (n) (* n n)))) (n 3)))
+  ;; expect: '(n 3)
   (car (cdr (cdr exp))))
 
 (defun scm-beginscm (exp)

@@ -1,6 +1,9 @@
 (in-package #:manifold-scheme)
 
 (defun desugar (ast)
+  "Desugar the abstract syntax tree."
+  ;; given: Node
+  ;; expect: Node 
   (match ast
 	 ((var :v a)
 	  (make-var :v a))
@@ -46,6 +49,8 @@
 
 (defun desugar-letscm (ast)
   "Converts a Let expression into a Lambda expression."
+  ;; given: Let Node
+  ;; expect: Lambda Node 
   (match ast
 	 ((letscm :var a :expr b :body c)
 	  (make-application
@@ -54,6 +59,7 @@
 	 (_ (error "Not a Let expression"))))
 
 (defun desugar-letrecscm (ast)
+  "Converts a Letrec expression into a combination of Let and Begin Nodes."
   (match ast
 	 ((letrecscm :bindings a :expression b)
 	  (let* ((namings (mapcar (lambda (b) (list (car b) (parse-exp 'false)))
@@ -76,6 +82,7 @@
 
 	 
 (defun desugar-beginscm (ast)
+  "Converts  a Begin Node into a Let node."
   (match ast
 	 ((beginscm :body a :expression b)
 	  (let ((exps (append a (list b))))
@@ -85,6 +92,7 @@
   
 
 (defun make-letbind (exps)
+  "Construct Let structures."
   (if (and (listp exps)
 	   (equalp (length exps) 1))
       (car exps)
