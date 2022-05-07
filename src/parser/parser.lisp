@@ -41,7 +41,7 @@
 		       :rhs (parse-exp (set-rhs x))))
   
          ((guard x (scm-lambdap x))
-	  (make-lambdascm :var (lambda-var x)
+	  (make-lambdascm :var (mapcar (lambda (var) (parse-exp var)) (lambda-var x))
 			  :body (parse-exp (lambda-body x))))
   
          ((guard x (scm-primitive-p x))

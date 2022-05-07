@@ -57,11 +57,17 @@
 		  
 	 
 	 ((application :operator a :operands b)
-	  (cps  a
-	       (lambda ($f)
-		 (*cps* b
-		       (lambda ($es)
-			 `(,$f ,$es ,co))))))))
+	  (let ((app (cps a
+			  (lambda ($f)
+			    (*cps* b
+				   (lambda ($es)
+				     `(,$f ,$es ,co)))))))
+	    (let* ((op (car app))
+	           (operand (car (cdr app)))
+	           (halt (car (cdr (cdr app)))))
+	      (make-application :operator op
+				:operands (append operand (list halt))))))))
+	      
 
 (defun *cps* (exprs k)
   (cond ((null exprs)
@@ -77,7 +83,7 @@
   (match aexp
 	 ((lambdascm :var a :body b)
 	  (let ((param (gensym "$K")))
-	    (make-lambdascm :var (list a param)
+	    (make-lambdascm :var (append a (list param))
 			    :body (cps-convert b param))))
 	 ((int :i a)
 	  (make-int :i a))
