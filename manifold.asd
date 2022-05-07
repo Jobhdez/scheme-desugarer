@@ -10,4 +10,5 @@
 			  :components ((:file "parser")))
 		 (:file "desugar")
 		 (:module "transformations"
-			  :components ((:file "cps")))))
+			  :components ((:file "cps")
+				       (:file "closure-conversion")))))
