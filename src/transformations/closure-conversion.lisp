@@ -8,6 +8,9 @@
 	 ((var :v a)
 	  (make-var :v a))
 
+	 ((guard x (symbolp x))
+	  x)
+
 	 ((bool :value a)
 	  (make-bool :value a))
 
@@ -20,7 +23,11 @@
 	  
 	  (defvar $env (gensym "Env"))
 	  (defvar *body* (closure-convert b))
-	  (defvar *fv* (set-difference (free-variables *body*) a))
+	  (defvar *fv* (set-difference (free-variables *body*) (if (not (listp a))
+								   (list a)
+								 a)
+				       :test #'equalp))
+								      
 	  (defvar id (allocate-environment *fv*))
 	  (defvar sub (mapcar (lambda (v) (list v (make-envget :id id :v v :env $env)))
 			      *fv*))
@@ -41,7 +48,7 @@
 				     b)))
 
 	 ((application :operator a :operands b)
-	  (make-application :operator (if (equalp a 'halt)
+	  (make-application :operator (if (symbolp a)
 					  a
 					(closure-convert a))
 			    :operands (if (not (listp b))
@@ -97,6 +104,7 @@
 (defun *substitute* (env exp)
   (cond ((null env)
 	 exp)
+	((symbolp exp) exp)
 	((int-p exp)
 	 exp)
 	((var-p exp)
@@ -130,11 +138,21 @@
 	 (make-envget :id (envget-id exp)
 		      :v (envget-v exp)
 		      :env (*substitute* env (envget-env exp))))
+	((primitive-p exp)
+	 (let* ((*subfvs* (mapcar (lambda (s) (car s)) sub))
+	        (*primvars* (append (list (cps-op (primitive-op exp)))
+				 (primitive-operands exp)))
+	        (notenvget (set-difference *primvars* *subfvs* :test #'equalp)))
+	   (cons notenvget (mapcar (lambda (s) (make-envget :id 1 :v s :env (gensym "ENV")))
+				   *subfvs*))))
+	   
 
 	((application-p exp)
 	 (make-application :operator (funcall (substitute-with env) (application-operator exp))
 			   :operands (mapcar (substitute-with env)
-					     (application-operands exp))))))
+					     (if (not (listp (application-operands exp)))
+						 (list (application-operands exp))
+					       (application-operands exp)))))))
 	
 
 (defvar num-environments 0)
@@ -149,7 +167,7 @@
 
 
 (defun substitute-var (env var)
-  (let ((sub (assq var env)))
+  (let ((sub (assoc var env)))
     (if sub
 	(car (cdr sub))
       var)))

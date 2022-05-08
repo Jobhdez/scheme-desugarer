@@ -35,13 +35,13 @@
 	  (make-application :operator co :operands (cps-atomic x)))
 	 ((ifscm :cond a :then b :else c)
 	  (let ((param (gensym "$K")))
-	    `(,(make-lambdascm :var param
+	    (make-application :operator
+			      (make-lambdascm :var param
 			               :body (cps  a
 					            #'(lambda (aexp)
-					               (make-ifscm :cond aexp
-							           :then (cps-convert b param)
-							           :else (cps-convert c param)))))
-	      ,co)))
+							(make-ifscm :cond aexp							           :then (cps-convert b param)
+							            :else (cps-convert c param)))))
+			      :operands co)))
 
 	 ((setscm :var a :rhs b)
 	  (cps b (lambda (aexp)
