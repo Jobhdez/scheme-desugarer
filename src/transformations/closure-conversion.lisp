@@ -60,8 +60,6 @@
 						  (closure-convert operand))
 						b))))))
 
-;; I have to make sure that free-variables returns a list; i also have to make sure
-;; the lambdascm :var a is a list 
 
 (defun free-variables (exp)
   (match exp
