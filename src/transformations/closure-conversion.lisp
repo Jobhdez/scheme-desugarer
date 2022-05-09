@@ -20,20 +20,18 @@
 			 :fn c))
 
 	 ((lambdascm :var a :body b)
-	  
-	  (defvar $env (gensym "Env"))
-	  (defvar *body* (closure-convert b))
-	  (defvar *fv* (set-difference (free-variables *body*) (if (not (listp a))
-								   (list a)
-								 a)
+	  (let* (($env (gensym "ENV"))
+		 (*body* (closure-convert b))
+		 (*fv* (set-difference (free-variables *body*)
+				       (if (not (listp a))
+					   (list a)
+					 a)
 				       :test #'equalp))
-								      
-	  (defvar id (allocate-environment *fv*))
-	  (defvar sub (mapcar (lambda (v) (list v (make-envget :id id :v v :env $env)))
-			      *fv*))
-	  
-	  (make-closure :lam (make-lambdascm :var `(,$env ,@a) :body (*substitute* sub *body*))
-			:env (make-envmake :id id :fvs (mapcar #'list *fv* *fv*))))
+		 (id (allocate-environment *fv*))
+		 (sub (mapcar (lambda (v) (list v (make-envget :id id :v v :env $env)))
+			      *fv*)))
+	    (make-closure :lam (make-lambdascm :var `(,$env ,@a) :body (*substitute* sub *body*))
+			  :env (make-envmake :id id :fvs (mapcar #'list *fv* *fv*)))))
 
 	 ((ifscm :cond a :then b :else c)
 	  (make-ifscm :cond (closure-convert a)
@@ -67,14 +65,22 @@
 	  '())
 
 	 ((var :v a)
+	  (list (make-var :v a)))
+
+	 ((cps :op a)
 	  '())
+
+	 ((guard x (symbolp x))
+	  (list x))
 
 	 ((bool :value a)
 	  '())
 
 	 ((lambdascm :var a :body b)
 	  (set-difference (free-variables b)
-			  a
+			  (if (symbolp (cdr a))
+			      (list (car a) (cdr a))
+			    a)
 			  :test #'equalp))
 
 	 ((ifscm :cond a :then b :else c)
@@ -86,23 +92,43 @@
 	  (union (list a)
 		 (free-variables (if (listp b) b (list b)))))
 
+	 ((closure :lam a :env b)
+	  (union (free-variables a)
+		 (free-variables b)))
+
+	 ((envmake :id a :fvs b)
+	  (reduce #'union (mapcar (lambda (fv) (free-variables fv)) (if (and (listp b)
+									     (or (symbolp (car b))
+										 (var-p (car b))))
+									b
+								      (car b)))))
+	 ((envget :id a :v b :env c)
+	  (free-variables c))
+				   
+									    
+
 	 ((primitive :op a :operands b)
-	  (append (list (cps-op a)) b))
+	  (union (free-variables a)
+		 (reduce #'union (mapcar (lambda (fv) (free-variables fv))
+					 (if (listp b)
+					     b
+					   (list b))))))
+			 
 
 	 ((application :operator a :operands b)
 	  (union (free-variables a)
 		 (reduce #'union (mapcar (lambda (fv) (free-variables fv))
 					 (if (not (listp b))
 					     (list b)
-					   b))
-			  )))))
+					   b)))))))
+			 
 	  
 
 
 (defun *substitute* (env exp)
   (cond ((null env)
 	 exp)
-	((symbolp exp) exp)
+	((symbolp exp) (substitute-var env exp))
 	((int-p exp)
 	 exp)
 	((var-p exp)
