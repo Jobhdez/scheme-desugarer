@@ -39,7 +39,8 @@
 			      (make-lambdascm :var param
 			               :body (cps  a
 					            #'(lambda (aexp)
-							(make-ifscm :cond aexp							           :then (cps-convert b param)
+							(make-ifscm :cond aexp	
+								    :then (cps-convert b param)
 							            :else (cps-convert c param)))))
 			      :operands co)))
 
