@@ -2,6 +2,37 @@
 
 a scheme to c compiler: development in progress
 
+# Using the program 
+
+1. For this you need to clone this repo into a place SBCL can see -- i.e., `~/quicklisp/local-projects/`.
+2. Run `(ql:quickload :manifold)`. 
+3. Run `(in-package #:manifold-scheme)`
+
+## System overview
+
+```
++---------+               +------------+
+| Parsing |--- [ast] ---> | desugaring |
++---------+               +------------+
+                                |
+                          [desugared ast]
+                                |
+                                V
+                          +----------------+                   +-------------+
+                          | continuation-  |                   |  closure    |
+                          | passing style  |---- [cps ast] --->| conversion  |
+                          | conversion     |                   |             |
+                          +----------------+                   +-------------+
+                                                                     |
+                                                                  [cc ast]
+                                                                     |
+                                                                     V
+                                                               +------------------+
+                                                               | C code generator |
+                                                               +------------------+
+```
+
+
 ## Acknowledgements
 1. The articles (about compilers) and an actual compiler in Scheme by Dr. Might were very helpful.
 
