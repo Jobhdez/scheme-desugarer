@@ -30,6 +30,9 @@ a scheme to c compiler: development in progress
                                                                +------------------+
                                                                | C code generator |
                                                                +------------------+
+                                                                        |
+                                                                        V
+                                                                      [C code]
 ```
 
 
