@@ -4,6 +4,7 @@
   (:export #:parse-exp
 	   #:var
 	   #:int
+	   #:application
 	   #:bool
 	   #:primitive
 	   #:letscm
@@ -12,4 +13,18 @@
 	   #:letrecscm
 	   #:setscm
 	   #:beginscm
-	   #:desugar))
+	   #:desugar
+	   #:make-int
+	   #:make-var
+	   #:make-bool
+	   #:make-letscm
+	   #:make-primitive
+	   #:make-letrecscm
+	   #:make-lambdascm
+	   #:make-application
+	   #:make-beginscm
+	   #:make-setscm
+	   #:make-ifscm
+	   #:scm-letrecp
+	   #:letrec-bindings
+	   #:letrec-expression))
