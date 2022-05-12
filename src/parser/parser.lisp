@@ -3,15 +3,16 @@
 (defun parse-exp (exp)
   "Parse given EXP."
   (match exp
-	 ((guard x (and (not (scm-boolp x))
-			(symbolp x)))
-	  (make-var :v x))
 	 
          ((guard x (numberp x))
 	  (make-int :i x))
 	 
          ((guard x (scm-boolp x))
 	  (make-bool :value x))
+
+	 ((guard x (and (not (scm-boolp x))
+			(symbolp x)))
+	  (make-var :v x))
 	 
          ((guard x (scm-letp x))
 	  (make-letscm :var (mapcar (lambda (v) (parse-exp v))
@@ -113,14 +114,17 @@
 ;;;     - lambda
 ;;;     - primitive
 
+(defun same-name (x y)
+  (string= (symbol-name x) (symbol-name y)))
+
 (defun scm-boolp (exp)
   "Check if Exp is a boolean."
   ;; Exp -> bool
   ;; given: (scm-boolp 'true)
   ;; expect: T
-  (and (not (listp exp))
-       (or (equalp exp 'true)
-	   (equalp exp 'false))))
+  (and (symbolp exp)
+       (or (same-name exp 'true)
+	   (same-name exp 'false))))
 
 (defun scm-letp (exp)
   "Check if Exp is a Let expression."
@@ -128,7 +132,7 @@
   ;; given: (scm-letp '(let ((n 2)) (* n n)))
   ;; expect: T
   (and (listp exp)
-       (equalp (car exp) 'let)))
+       (same-name (car exp) 'let)))
 
 (defun let-var (exp)
   "Get the variable of the Let Exp."
@@ -157,7 +161,8 @@
   ;; given: (scm-letrecp '(letrec ((n (lambda (n) (* n n)))) (n 3)))
   ;; expect: T
   (and (listp exp)
-       (equalp (car exp) 'letrec)))
+       (symbolp (car exp))
+       (same-name (car exp) 'letrec)))
 
 (defun letrec-bindings (exp)
   "Get the bindings of the Letrec expression."
@@ -174,7 +179,8 @@
 (defun scm-beginscm (exp)
   "Check if Exp is a Begin exp."
   (and (listp exp)
-       (equalp (car exp) 'begin)))
+       (symbolp (car exp))
+       (same-name (car exp) 'begin)))
 
 (defun begin-body (exp)
   "Gets the body of the begin."
@@ -193,7 +199,8 @@
   ;; given: (scm-setp '(set! d 2))
   ;; expect: T
   (and (listp exp)
-       (equalp (car exp) 'set!)))
+       (symbolp (car exp))
+       (same-name (car exp) 'set!)))
 
 (defun set-var (exp)
   "Get the variable of the Set! expression."
@@ -215,7 +222,8 @@
   ;; given: (scm-ifp '(if (= 2 2) 1 2))
   ;; expect: T
   (and (listp exp)
-       (equalp (car exp) 'if)))
+       (and (symbolp (car exp))
+	    (same-name (car exp) 'if))))
 
 (defun if-cond (exp)
   "Get the cond of the If expression."
@@ -244,7 +252,8 @@
   ;; given: (scm-lambdap '(lambda (n) (* n n)))
   ;; T
   (and (listp exp)
-       (equalp (car exp) 'lambda)))
+       (symbolp (car exp))
+       (same-name (car exp) 'lambda)))
 
 (defun lambda-var (exp)
   "Checks if the Exp is a Lambda expression."
