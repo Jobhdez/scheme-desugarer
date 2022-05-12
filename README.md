@@ -6,7 +6,8 @@ a scheme to c compiler: development in progress
 
 1. For this you need to clone this repo into a place SBCL can see -- i.e., `~/quicklisp/local-projects/`.
 2. Run `(ql:quickload :manifold)`. 
-3. Run `(in-package #:manifold-scheme)`
+3. If you wan to run the tests then do: `(ql:quickload :manifold/tests)` and then `(asdf:test-system :manifold)`.
+5. Run `(in-package #:manifold-scheme)` to use the program.
 
 ## System overview
 
