@@ -9,7 +9,7 @@
 					       " "
 					       s
 					       (string #\Newline)))))
-	 (body (ompile-ast ast append-preamble)))
+	 (body (compile-ast ast append-preamble)))
     (concatenate 'string
 		 "int main (int argc, char* argv[]) {"
 		 (string #\Newline)
