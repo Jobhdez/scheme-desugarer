@@ -54,7 +54,8 @@
   (match ast
 	 ((letscm :var a :expr b :body c)
 	  (make-application
-	   :operator (make-lambdascm :var a :body c)
+	   :operator (make-lambdascm :var (if (listp a) a (list a))
+				     :body c)
 	   :operands b))
 	 (_ (error "Not a Let expression"))))
 
@@ -87,7 +88,7 @@
 			 :expr arguments
 			 :body (make-beginscm :body sets
 					      :expression b))))
-
+	 
 	 (_ (error "Not a Letrec expression."))))
 
 

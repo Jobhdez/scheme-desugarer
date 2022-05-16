@@ -63,11 +63,13 @@
 			    (*cps* b
 				   (lambda ($es)
 				     `(,$f ,$es ,co)))))))
-	    (let* ((op (car app))
-	           (operand (car (cdr app)))
-	           (halt (car (cdr (cdr app)))))
-	      (make-application :operator op
-				:operands (append operand (list halt))))))))
+	    (if (listp app)
+		(let* ((op (car app))
+	               (operand (car (cdr app)))
+	               (halt (car (cdr (cdr app)))))
+		  (make-application :operator op
+				    :operands (append operand (list halt))))
+	      app)))))
 	      
 
 (defun *cps* (exprs k)

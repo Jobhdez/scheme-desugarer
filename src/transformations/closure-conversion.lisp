@@ -1,5 +1,12 @@
 (in-package #:manifold-scheme)
 
+(defstruct envget id v env)
+
+(defstruct closure lam env)
+
+(defstruct envmake id fvs)
+
+
 (defun closure-convert (ast)
   (match ast
 	 ((int :i a)
@@ -163,7 +170,7 @@
 		      :v (envget-v exp)
 		      :env (*substitute* env (envget-env exp))))
 	((primitive-p exp)
-	 (let* ((*subfvs* (mapcar (lambda (s) (car s)) sub))
+	 (let* ((*subfvs* (mapcar (lambda (s) (car s)) env))
 	        (*primvars* (append (list (cps-op (primitive-op exp)))
 				 (primitive-operands exp)))
 	        (notenvget (set-difference *primvars* *subfvs* :test #'equalp)))
@@ -215,8 +222,3 @@
 	 (t (cons (car env) (assq-remove-key (cdr env) key)))))
 
 
-(defstruct envget id v env)
-
-(defstruct closure lam env)
-
-(defstruct envmake id fvs)
