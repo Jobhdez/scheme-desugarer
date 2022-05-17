@@ -219,8 +219,8 @@
                        "}"
 		       (string #\Newline))))))
   
-; c-compile-env-struct : list[symbol] -> string
-(define (compile-env-struct ast)
+
+(defun compile-env-struct (ast)
   (let* ((id     (env-id ast))
          (fields (env-fields ast))
          (sid    (write-to-string id))
