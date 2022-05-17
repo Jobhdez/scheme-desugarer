@@ -38,7 +38,7 @@ a scheme to c compiler: development in progress
 
 
 ## Acknowledgements
-1. This compiler is based on the one built by Dr. Might. I modified some parts and added new ones but the architecture is different. My compiler has a parser, and cps converter. The rest is essentially a fork of Dr. Might's compiler. You can take a look at his compiler [here](https://matt.might.net/articles/compiling-scheme-to-c/)
+1. This compiler is based on the one built by Dr. Might:  [here](https://matt.might.net/articles/compiling-scheme-to-c/)
 
 2. The 90 minute Scheme to C [compiler](https://gist.github.com/nyuichi/1116686) and [slides](http://churchturing.org/y/90-min-scc.pdf) by Dr. Feeley, the creator of Gambit Scheme, helped a lot.
 
