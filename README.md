@@ -40,7 +40,7 @@ a scheme to c compiler: development in progress
 ## Acknowledgements
 1. This compiler is based on the one built by Dr. Might:  [here](https://matt.might.net/articles/compiling-scheme-to-c/)
 
-2. I would like to thank Robert Smith for giving me feedback and giving me intuition for cps conversion and moreover I would to thank Elias for helping me debug. Both are from the [Coalton Language](https://github.com/coalton-lang/coalton) project.
+2. I would like to thank Robert Smith for giving me feedback and giving me intuition for cps conversion and moreover I would to thank Elias for helping me debug. Both develop the [Coalton Language](https://github.com/coalton-lang/coalton).
 
 
 
