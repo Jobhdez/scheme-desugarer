@@ -10,7 +10,7 @@ a scheme to c compiler: development in progress -
 
 - [x] closure conversion (most of it)
 
-- [ ] code generation
+- [ ] code generation (in progress ...)
 
 # Using the program 
 
