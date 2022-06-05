@@ -1,16 +1,6 @@
 # manifold-scheme: a scheme to c compiler
 
-a scheme to c compiler: development in progress - 
-
-- [x] parsing
-
-- [x] desugarer
-
-- [x] cps conversion
-
-- [x] closure conversion (most of it)
-
-- [ ] code generation (in progress ...)
+a scheme to c compiler: development in progress ...
 
 # Using the program 
 
