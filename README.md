@@ -1,6 +1,7 @@
 # manifold-scheme: a scheme to c compiler
+As of 9/23/23 I havent finished this project. What I am thinking is to rewrite it and use a normal form as the intermediate language and add an x86 backend as well. I would keep the desugarer.
 
-a scheme to c compiler: development in progress ...
+
 
 # Using the program 
 
