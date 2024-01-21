@@ -9,10 +9,7 @@
 		((:file "package")
 		 (:module "parser"
 			  :components ((:file "parser")))
-		 (:file "desugar")
-		 (:module "transformations"
-			  :components ((:file "cps")
-				       (:file "closure-conversion")))))
+		 (:file "desugar")))
 
 (asdf:defsystem #:manifold/tests
 		:description "Tests for Manifold Scheme."
