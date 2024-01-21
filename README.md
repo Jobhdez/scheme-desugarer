@@ -1,51 +1,33 @@
-# manifold-scheme: a scheme to c compiler
-As of 9/23/23 I havent finished this project. What I am thinking is to rewrite it and use `a-normal form` as the intermediate language and add an x86 backend as well. I would keep the desugarer.
+# scheme desugar
+It desugars Scheme into a tiny core.
 
+# Motivation
+Why should you desugar? It makes compilation easier. After the desugaring process you can lower this AST to ANF or another intermediate language. Instead of dealing with all the input language you end up with less complexity!
 
+# Desugarer
 
-# Using the program 
-
-1. For this you need to clone this repo into a place SBCL can see -- i.e., `~/quicklisp/local-projects/`.
-2. Run `(ql:quickload :manifold)`. 
-3. If you wan to run the tests then do: `(ql:quickload :manifold/tests)` and then `(asdf:test-system :manifold)`.
-5. Run `(in-package #:manifold-scheme)` to use the program.
-
-## System overview
+Input language:
+			 
 
 ```
-+---------+               +------------+
-| Parsing |--- [ast] ---> | desugaring |
-+---------+               +------------+
-                                |
-                          [desugared ast]
-                                |
-                                V
-                          +----------------+                   +-------------+
-                          | continuation-  |                   |  closure    |
-                          | passing style  |---- [cps ast] --->| conversion  |
-                          | conversion     |                   |             |
-                          +----------------+                   +-------------+
-                                                                     |
-                                                                  [cc ast]
-                                                                     |
-                                                                     V
-                                                               +------------------+
-                                                               | C code generator |
-                                                               +------------------+
-                                                                        |
-                                                                        V
-                                                                      [C code]
+exp ::= number
+     | bool
+     | var
+     | (let ((var exp)) body)
+     | (letrec ((var exp)) body)
+     | (begin exp exp ...)
+     | (set! var exp)
+     | (lambda (var) exp)
+     | (if exp exp exp)
 ```
 
+Output language
 
-## Acknowledgements
-1. This compiler is based on the one built by Dr. Might:  [here](https://matt.might.net/articles/compiling-scheme-to-c/)
-
-2. I would like to thank Robert Smith for giving me feedback and giving me intuition for cps conversion and moreover I would to thank Elias for helping me debug. Both develop the [Coalton Language](https://github.com/coalton-lang/coalton).
-
-
-
--- Job
-
-
+```
+exp ::= number
+     | var
+     | (lambda (var) exp)
+     | (set! VAR exp)
+     | (if exp exp exp)
+   
 
