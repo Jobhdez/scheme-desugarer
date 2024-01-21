@@ -1,5 +1,5 @@
 (asdf:defsystem #:manifold
-		:description "A scheme to c compiler :-)"
+		:description "A scheme desugarer :-)"
 		:author "Job Hernandez <hj93@protonmail.com>"
 		:in-order-to ((asdf:test-op (asdf:test-op #:manifold/tests)))
 		:depends-on (#:trivia)
